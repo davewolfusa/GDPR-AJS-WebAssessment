@@ -10,6 +10,12 @@
 	width: 80%;
 }
 
+.button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
 .additional-selection {
   opacity: 0.75;
   font-size: 0.75em;

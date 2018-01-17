@@ -4,7 +4,10 @@ import { NgControl } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { GdprassessmentComponent } from './gdprassessment/gdprassessment.component';
-import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatTooltipModule } from '@angular/material';
+import { HttpClientXsrfModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
+import { MatTooltipModule, MatButtonModule } from '@angular/material';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -23,7 +26,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonModule,
+    HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'ACSM-GDPR_Assessment-Xsrf-Cookie',
+      headerName: 'ACSM-GDPR_Assessment-Xsrf-Header',
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

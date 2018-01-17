@@ -5,7 +5,9 @@ import { RequestorInfoModel } from './model/requestorInfo.model';
 import { GDPRAssessmentInfo } from './model/gdprAssessmentInfo.model';
 import { Certification } from './model/certification.model';
 import { Country } from './model/country.model';
+import { GDPRQuickAssessmentBean } from './model/gdprquickassessmentbean.model';
 import { IAASProvider } from './model/iaasprovider.model';
+import { HttpClient } from '@angular/common/http';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -20,18 +22,27 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   templateUrl: './gdprassessment.component.html',
   styleUrls: ['./gdprassessment.component.css']
 })
+
 export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
+  GDPR_LAMBDA_URL = 'https://zo1y52azmf.execute-api.us-west-2.amazonaws.com/prod/GDPRWebAssessFunction';
   requestor: RequestorInfoModel;
   assessmentInfo: GDPRAssessmentInfo;
+  gdprBean: GDPRQuickAssessmentBean;
+  results: string[];
 
-  selectedOfficeLocations = new FormControl();
-  selectedEmployeeLocations = new FormControl();
-  selectedContractorLocations = new FormControl();
-  selectedCountriesServiced = new FormControl();
-  selectedIAASProviderLocations = new FormControl();
-  selectedCertifications = new FormControl();
-  selectedIAASProviders = new FormControl();
+  isFormValid = false;
+
+  hqLocationFC = new FormControl('', [ Validators.required ]);
+  officeLocationsFC = new FormControl('', [ Validators.required ]);
+  employeeLocationsFC = new FormControl('', [ Validators.required ]);
+  contractorLocationsFC = new FormControl('', [ Validators.required ]);
+  countriesServicedFC = new FormControl('', [ Validators.required ]);
+  iaasProvidersFC = new FormControl('', [ Validators.required ]);
+  iaasProviderLocationsFC = new FormControl('', [ Validators.required ]);
+  isPrivacyShieldCertifiedFC = new FormControl('', [ Validators.required ]);
+  certificationsFC = new FormControl('', [ Validators.required ]);
+  dataClassificationLevelsFC = new FormControl('', [ Validators.required ]);
 
   // Valdations
   namePattern = /^[a-zA-Z][a-zA-Z ,]+$/;
@@ -132,7 +143,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
       { id: 'CHINA', name: 'China', continent: 'ASIA', isEUMember: false }
   ];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.requestor = new RequestorInfoModel();
     this.assessmentInfo = new GDPRAssessmentInfo();
   }
@@ -184,6 +195,55 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
       }
     }
     return message;
+  }
+
+  getSelectErrorMessages(formControl: FormControl, fieldNameString: string) {
+    let message = '';
+    if (formControl.invalid) {
+      if (formControl.errors.required) {
+        message = 'You must select a value';
+      }
+    }
+    return message;
+  }
+
+  submitForm() {
+    this.gdprBean = new GDPRQuickAssessmentBean();
+    this.gdprBean.requestor = this.requestor;
+    this.gdprBean.assessmentInfo = this.assessmentInfo;
+
+    // Make the HTTP request:
+    this.http.post(this.GDPR_LAMBDA_URL, this.gdprBean).subscribe(data => {
+      // Read the result field from the JSON response.
+      this.results = data['results'];
+    });
+  }
+
+  onChangeEvent() {
+    this.isFormValid = this.checkIsFormValid();
+  }
+
+  checkIsFormValid() {
+    let result = true;
+    if (this.firstNameFC.invalid) { result = false; }
+    if (this.lastNameFC.invalid) { result = false; }
+    if (this.titleFC.invalid) { result = false; }
+    if (this.phoneFC.invalid) { result = false; }
+    if (this.emailFC.invalid) { result = false; }
+    if (this.companyNameFC.invalid) { result = false; }
+    if (this.companyAddressFC.invalid) { result = false; }
+    if (this.hqLocationFC.invalid) { result = false; }
+    if (this.countriesServicedFC.invalid) { result = false; }
+    if (this.officeCountFC.invalid) { result = false; }
+    if (this.officeLocationsFC.invalid) { result = false; }
+    if (this.employeeLocationsFC.invalid) { result = false; }
+    if (this.contractorLocationsFC.invalid) { result = false; }
+    if (this.iaasProvidersFC.invalid) { result = false; }
+    if (this.iaasProviderLocationsFC.invalid) { result = false; }
+    if (this.isPrivacyShieldCertifiedFC.invalid) { result = false; }
+    if (this.certificationsFC.invalid) { result = false; }
+    if (this.dataClassificationLevelsFC.invalid) { result = false; }
+    return result;
   }
 
 }
