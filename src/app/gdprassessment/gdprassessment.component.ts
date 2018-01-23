@@ -95,6 +95,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   ];
 
   constructor(private http: HttpClient) {
+    this.gdprBean = new GDPRQuickAssessmentBean();
     this.requestor = new RequestorInfoModel();
     this.assessmentInfo = new GDPRAssessmentInfo();
   }
@@ -277,52 +278,21 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   }
 
   submitForm() {
-    this.gdprBean = new GDPRQuickAssessmentBean();
-    this.gdprBean.requestor = this.requestor;
-    this.gdprBean.assessmentInfo = this.assessmentInfo;
 
     // Make the HTTP request:
-    // X-Amz-Invocation-Type:RequestResponse
-    this.http.post(
+    // 'X-Amz-Invocation-Type' : 'RequestResponse',
+    this.http.post
+    (
       this.GDPR_LAMBDA_URL,
       this.gdprBean.toString(),
       {
-      headers: new HttpHeaders()
-        .set('Content-Type', 'application/json')
-        .set('Acess-Control-Allow-Origin', '*')
+        headers: {
+          'Content-Type' : 'application/json'
+        }
       }
     ).subscribe(data => {
       // Read the result field from the JSON response.
       this.results = data['results'];
     });
   }
-  onChangeEvent() {
-    // this.isFormValid = this.checkIsFormValid();
-  }
-
-/*
-  checkIsFormValid() {
-    let result = true;
-    if (this.firstNameFC.invalid) { result = false; }
-    if (this.lastNameFC.invalid) { result = false; }
-    if (this.titleFC.invalid) { result = false; }
-    if (this.phoneFC.invalid) { result = false; }
-    if (this.emailFC.invalid) { result = false; }
-    if (this.companyNameFC.invalid) { result = false; }
-    if (this.companyAddressFC.invalid) { result = false; }
-    if (this.hqLocationFC.invalid) { result = false; }
-    if (this.countriesServicedFC.invalid) { result = false; }
-    if (this.officeCountFC.invalid) { result = false; }
-    if (this.officeLocationsFC.invalid) { result = false; }
-    if (this.employeeLocationsFC.invalid) { result = false; }
-    if (this.contractorLocationsFC.invalid) { result = false; }
-    if (this.iaasProvidersFC.invalid) { result = false; }
-    if (this.iaasProviderLocationsFC.invalid) { result = false; }
-    if (this.isPrivacyShieldCertifiedFC.invalid) { result = false; }
-    if (this.certificationsFC.invalid) { result = false; }
-    if (this.dataClassificationLevelsFC.invalid) { result = false; }
-    return result;
-  }
- */
-
 }
