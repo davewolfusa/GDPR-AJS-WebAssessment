@@ -8,7 +8,7 @@ import { HttpClientXsrfModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
 import { MatTooltipModule, MatButtonModule } from '@angular/material';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 

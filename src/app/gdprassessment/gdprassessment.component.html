@@ -1,10 +1,11 @@
+<form [formGroup]="assessmentFG" novalidate>
 <div>
 <h2>Requestor Details:</h2>
+<fieldset [formGroup]="requestorFG">
 <ul class="ul li span" spellcheck="true">
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.firstName" [formControl]="firstNameFC" required 
- (change)="onChangeEvent()"
+ <input matInput [(ngModel)]="requestor.firstName" [formControl]="firstNameFC" required (change)="onChangeEvent()"
  name="first name" placeholder="first name">
     <mat-error *ngIf="firstNameFC.invalid">
       {{ getTextErrorMessages(firstNameFC, 'name', 60) }}
@@ -12,8 +13,7 @@
  </mat-form-field>
   
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.lastName" [formControl]="lastNameFC" required 
- (change)="onChangeEvent()"
+ <input matInput [(ngModel)]="requestor.lastName" [formControl]="lastNameFC" required (change)="onChangeEvent()"
  name="last name" placeholder="last name">
     <mat-error *ngIf="lastNameFC.invalid">
       {{ getTextErrorMessages(lastNameFC, 'name', 60) }}
@@ -74,10 +74,12 @@
   </mat-form-field>
   </li>
 </ul>
+</fieldset>
 </div>
 
 <div>
 <h2> Assessment Information:</h2>
+<fieldset formGroupName="assessmentInfoFG">
 <ul class="ul li span" spellcheck="true">
 
  <li>
@@ -265,7 +267,7 @@
    <mat-option [value]=true>True</mat-option>
    <mat-option [value]=false>False</mat-option>
    </mat-select>
-    <mat-error *ngIf="isPrivacyShieldCertifiedFC.invalid">
+    <mat-error *ngIf="isPrivacyShieldCertifiedFC.invalid && isPrivacyShieldCertifiedFC.dirty">
       You must select a value.
     </mat-error>
   </mat-form-field>
@@ -309,12 +311,16 @@
   </mat-form-field>
    </li>
 </ul>
+</fieldset>
 </div>
 <div class="button-row">
-  <button mat-raised-button color="primary" [disabled]="!isFormValid" (click)="submitForm()">Submit</button>
+  <button mat-raised-button color="primary" [disabled]="assessmentFG.invalid || assessmentFG.pristine" 
+      (click)="submitForm()">Submit</button>
 </div>
-<p>Disclaimer:</p>
-<p>This GDPR Quick Assessment is intended to assist organizations with assessing their GDPR compliance 
+</form>
+<p><b>Internal Policy:</b> All data destroyed upon use.</p>
+<p><b>Disclaimer:</b></p>
+<p>This <b>GDPR Quick Assessment</b> is intended to assist organizations with assessing their GDPR compliance 
       complexity.  This GDPR Quick Assessment is provided for general public informational purposes only. 
       Any results, scoring or recommendations produced by the GDPR Quick Assessment should not be relied 
       upon to determine how GDPR applies to an organization or an organization’s compliance with GDPR, and 
@@ -324,15 +330,15 @@
       highly fact-specific. We encourage all organizations using this GDPR Quick Assessment to work with a 
       legally qualified professional to discuss GDPR, how it applies specifically to their organization, 
       and how best to ensure compliance.</p>
- <p>AMERICAN CYBER SECURITY MANAGEMENT MAKES NO WARRANTIES, EXPRESS, IMPLIED, OR STATUTORY, AS TO THE 
-      INFORMATION IN THIS GDPR DETAILED ASSESSMENT. American CyberSecurity Management disclaims any 
+ <p><b>AMERICAN CYBER SECURITY MANAGEMENT MAKES NO WARRANTIES, EXPRESS, IMPLIED, OR STATUTORY, AS TO THE 
+      INFORMATION IN THIS GDPR DETAILED ASSESSMENT.</b> American CyberSecurity Management disclaims any 
       conditions, express or implied, or other terms that use of the  products or services will ensure 
       the organization’s compliance with the GDPR.  This GDPR Quick Assessment is provided "as-is".  
       Information and recommendations expressed in this GDPR Detailed Assessment may change without notice.</p>
- <p>This GDPR Detailed Assessment does not provide the user with any legal rights to any intellectual 
+ <p>This GDPR Quick Assessment does not provide the user with any legal rights to any intellectual 
       property in any American Cyber Security Management product or service.  Use of the tool is for 
       internal, reference purposes only; however, American Cyber Security Management partners may 
       distribute the GDPR Quick Assessment to their customers for such customers’ internal, reference 
       purposes only. Any distribution of the GDPR Quick Assessment by a American Cyber Security Management 
       partner to its customers must include terms consistent with those set forth in this disclaimer.</p>
- <p>© 2017 American Cyber Security Management.  All rights reserved</p>
+ <p><b>© 2017 American Cyber Security Management.  All rights reserved</b></p>
