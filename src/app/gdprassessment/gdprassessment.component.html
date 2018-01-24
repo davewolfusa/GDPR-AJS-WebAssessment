@@ -304,7 +304,7 @@
   <button mat-raised-button color="primary" [disabled]="assessmentFG.invalid || assessmentFG.pristine" 
       (click)="submitForm()">Submit</button>
 </div>
-<pre>{{this.requestorFG.value | json}}</pre>
+<pre>{{this.gdprBean | json}}</pre>
 </form>
 <p><b>Internal Policy:</b> All data destroyed upon use.</p>
 <p><b>Disclaimer:</b></p>

@@ -1,7 +1,7 @@
 import { Component, Directive, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { RequestorInfoModel } from './model/requestorInfo.model';
+import { RequestorInfo } from './model/requestorInfo.model';
 import { GDPRAssessmentInfo } from './model/gdprAssessmentInfo.model';
 import { Certification } from './model/certification.model';
 import { Country } from './model/country.model';
@@ -29,7 +29,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
   GDPR_LAMBDA_URL = 'https://d503c4cwl9.execute-api.us-west-2.amazonaws.com/prod/GDPRAssessment';
-  requestor: RequestorInfoModel;
+  requestor: RequestorInfo;
   assessmentInfo: GDPRAssessmentInfo;
   gdprBean: GDPRQuickAssessmentBean;
   results: string[];
@@ -100,9 +100,9 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   ];
 
   constructor(private http: HttpClient) {
-    this.gdprBean = new GDPRQuickAssessmentBean();
-    this.requestor = new RequestorInfoModel();
+    this.requestor = new RequestorInfo();
     this.assessmentInfo = new GDPRAssessmentInfo();
+    this.gdprBean = new GDPRQuickAssessmentBean(this.requestor, this.assessmentInfo);
   }
 
   ngOnInit() {
@@ -312,7 +312,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     this.http.post
     (
       this.GDPR_LAMBDA_URL,
-      this.gdprBean.toString(),
+      this.gdprBean,
       {
         headers: {
           'Content-Type' : 'application/json'

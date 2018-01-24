@@ -1,7 +1,12 @@
 import { GDPRAssessmentInfo } from './gdprAssessmentInfo.model';
-import { RequestorInfoModel } from './requestorInfo.model';
+import { RequestorInfo } from './requestorInfo.model';
 
 export class GDPRQuickAssessmentBean {
-  requestor: RequestorInfoModel;
+  requestor: RequestorInfo;
   assessmentInfo: GDPRAssessmentInfo;
+  
+  constructor(requestor: RequestorInfo, assessmentInfo: GDPRAssessmentInfo) {
+    this.requestor = requestor;
+    this.assessmentInfo = assessmentInfo;
+  }
 }
