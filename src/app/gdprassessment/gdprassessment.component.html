@@ -163,7 +163,9 @@
  <li>
  <mat-form-field class="half-width">
  <input matInput [(ngModel)]="assessmentInfo.contractorCount" [formControl]="contractorCountFC" required
- name="contractor count" placeholder="contractor count" size=50>
+ name="contractor count" placeholder="contractor count" size=50
+ (input)="onUpdateContractorCountValue()"
+ >
     <mat-error *ngIf="contractorCountFC.invalid">
       {{ getFieldErrorMessages(contractorCountFC, 'contractor count') }}
     </mat-error>
@@ -207,14 +209,17 @@
   <li>
  <mat-form-field class="third-width">
  <input matInput [(ngModel)]="assessmentInfo.iaasProviderCount" [formControl]="iaasProviderCountFC" required
- name="IAAS Provider Count" placeholder="IAAS provider count">
+ name="IAAS Provider Count" placeholder="IAAS provider count"
+ (input)="onUpdateProviderCountValue()"
+ >
     <mat-error *ngIf="iaasProviderCountFC.invalid">
       {{ getFieldErrorMessages(iaasProviderCountFC, 'IAAS Provider count') }}
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="third-width"> 
- <mat-select placeholder="IAAS providers"
+ <div >
+ <mat-select placeholder="IAAS providers" 
   [(ngModel)]="assessmentInfo.iaasProviders" [formControl]="iaasProvidersFC" 
   class="additional-selection" multiple required> 
   <mat-select-trigger> {{iaasProvidersFC.value ? iaasProvidersFC.value[0] : ''}} 
@@ -223,11 +228,13 @@
             </span> 
         </mat-select-trigger>   
         <mat-option
-  *ngFor="let provider of IAAS_PROVIDER_LIST" [value]="provider.id">{{
- provider.name }}</mat-option> </mat-select> </mat-form-field>
+  *ngFor="let provider of IAAS_PROVIDER_LIST" [value]="provider.id">{{ provider.name }}</mat-option> 
+ </mat-select> 
+ </div>
+ </mat-form-field>
  
  <mat-form-field class="third-width"> 
- <mat-select placeholder="IAAS provider locations"
+ <mat-select placeholder="IAAS provider locations" 
   [(ngModel)]="assessmentInfo.iaasProviderLocations" [formControl]="iaasProviderLocationsFC" 
   class="additional-selection" multiple required> 
   <mat-select-trigger> {{iaasProviderLocationsFC.value ? iaasProviderLocationsFC.value[0] : ''}} 

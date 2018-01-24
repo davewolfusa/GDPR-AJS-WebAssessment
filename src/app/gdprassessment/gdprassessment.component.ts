@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
+import { Component, Directive, Input, OnInit } from '@angular/core';
+import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { RequestorInfoModel } from './model/requestorInfo.model';
 import { GDPRAssessmentInfo } from './model/gdprAssessmentInfo.model';
@@ -18,6 +18,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
+// return iaasProviderCountFC.dirty && iaasProviderCountFC === 0;
+
 @Component({
   selector: 'app-gdprassessment',
   templateUrl: './gdprassessment.component.html',
@@ -33,6 +35,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   results: string[];
 
   isFormValid = false;
+  areProviderFieldsDisabled = true;
 
 
   // Valdations
@@ -70,6 +73,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   dataClassificationLevelsFC: FormControl;
 
   public CERTIFICATION_LIST: Array<Certification> = [
+      { id: 'NONE', name: 'None' },
       { id: 'ISO', name: 'ISO' },
       { id: 'PCI', name: 'PCI' },
       { id: 'HIPPA', name: 'HIPPA' },
@@ -79,7 +83,8 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   public IAAS_PROVIDER_LIST: Array<IAASProvider> = [
       { id: 'AMAZON_WEB_SERVICES', name: 'Amazon Web Services' },
       { id: 'GOOGLE_CLOUD_PLATFORM', name: 'Google Cloud Platform' },
-      { id: 'MICROSOFT_AZURE', name: 'Microsoft Azure' }
+      { id: 'MICROSOFT_AZURE', name: 'Microsoft Azure' },
+      { id: 'OTHER', name: 'Other' }
   ];
 
   public COUNTRY_LIST: Array<Country> = [
@@ -142,50 +147,73 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
       this.companyAddressFC = new FormControl('', [
         Validators.required,
         Validators.minLength(10),
-        Validators.maxLength(100),
+        Validators.maxLength(200),
         Validators.pattern(this.addressPattern)
       ]);
       this.officeCountFC = new FormControl('', [
         Validators.required,
         Validators.min(1),
+        Validators.max(1000000),
         Validators.pattern(this.integerPattern)
       ]);
       this.employeeCountFC = new FormControl('', [
         Validators.required,
         Validators.min(1),
+        Validators.max(10000000),
         Validators.pattern(this.integerPattern)
       ]);
       this.contractorCountFC = new FormControl('', [
         Validators.required,
         Validators.min(0),
+        Validators.max(10000000),
         Validators.pattern(this.integerPattern)
       ]);
       this.productTypeCountFC = new FormControl('', [
         Validators.required,
-        Validators.min(0),
+        Validators.min(1),
+        Validators.max(100000),
         Validators.pattern(this.integerPattern)
       ]);
       this.customerCountFC = new FormControl('', [
         Validators.required,
         Validators.min(1),
+        Validators.max(10000000000),
         Validators.pattern(this.integerPattern)
       ]);
       this.iaasProviderCountFC = new FormControl('', [
         Validators.required,
         Validators.min(0),
+        Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
       this.hqLocationFC = new FormControl('', [ Validators.required ]);
       this.officeLocationsFC = new FormControl('', [ Validators.required ]);
       this.employeeLocationsFC = new FormControl('', [ Validators.required ]);
-      this.contractorLocationsFC = new FormControl('', [ Validators.required ]);
+      this.contractorLocationsFC = new FormControl('', [ ]);
       this.countriesServicedFC = new FormControl('', [ Validators.required ]);
-      this.iaasProvidersFC = new FormControl('', [ Validators.required ]);
-      this.iaasProviderLocationsFC = new FormControl('', [ Validators.required ]);
+      this.iaasProvidersFC = new FormControl({ value: '', disabled: true});
+      this.iaasProviderLocationsFC = new FormControl({ value: '', disabled: true});
       this.isPrivacyShieldCertifiedFC = new FormControl('', [ Validators.required ]);
       this.certificationsFC = new FormControl('', [ Validators.required ]);
       this.dataClassificationLevelsFC = new FormControl('', [ Validators.required ]);
+  }
 
+  onUpdateContractorCountValue() {
+    if (this.assessmentInfo.contractorCount < 1) {
+      this.contractorLocationsFC.disable();
+    } else {
+      this.contractorLocationsFC.enable();
+    }
+  }
+
+  onUpdateProviderCountValue() {
+    if (this.assessmentInfo.iaasProviderCount < 1) {
+      this.iaasProvidersFC.disable();
+      this.iaasProviderLocationsFC.disable();
+    } else {
+      this.iaasProvidersFC.enable();
+      this.iaasProviderLocationsFC.enable();
+    }
   }
 
   createForm() {
