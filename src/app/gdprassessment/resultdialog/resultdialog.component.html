@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>GDPR Assessment Results</h2>
 <mat-dialog-content>
 <p>
-The American Cyber Security Management GDPR Assessment was {{ data.result }}, 
+The American Cyber Security Management GDPR Assessment was successful,
 The complexity score for {{ data.companyName }} is {{ data.score }}.
 </p>
 <p>
@@ -10,5 +10,7 @@ Please contact American Cyber Security Management for further GDPR assistance.
 </p>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="true">Close</button>
+<div class="button-row">
+  <button mat-raised-button color="primary" [mat-dialog-close]="true">Close</button>
+</div>
 </mat-dialog-actions>

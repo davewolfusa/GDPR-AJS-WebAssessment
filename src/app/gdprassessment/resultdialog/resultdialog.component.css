@@ -1,4 +1,9 @@
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .button {
-	text-align: center;
-	border: 3px solid green;
+  justify-content: center;
+  border: 3px solid green;
 }
