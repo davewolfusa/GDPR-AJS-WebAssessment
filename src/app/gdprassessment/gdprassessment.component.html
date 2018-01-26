@@ -304,8 +304,10 @@
   <button mat-raised-button color="primary" [disabled]="assessmentFG.invalid || assessmentFG.pristine" 
       (click)="submitForm()">Submit</button>
 </div>
-<pre>{{this.gdprBean | json}}</pre>
 </form>
+<div class="text-center">
+  <p class="lead" *ngIf="loading">Loading...</p>
+</div>
 <p><b>Internal Policy:</b> All data destroyed upon use.</p>
 <p><b>Disclaimer:</b></p>
 <p>This <b>GDPR Quick Assessment</b> is intended to assist organizations with assessing their GDPR compliance 

@@ -2,20 +2,26 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { AppComponent } from './app.component';
+import { APIGatewayService } from './gdprassessment/apigatewayservice';
 import { FormsModule } from '@angular/forms';
 import { GdprassessmentComponent} from './gdprassessment/gdprassessment.component';
 import { HttpClientXsrfModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
-import { MatTooltipModule, MatButtonModule } from '@angular/material';
+import { MatTooltipModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ResultDialogComponent } from './gdprassessment/resultdialog/resultdialog.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GdprassessmentComponent
+    GdprassessmentComponent,
+    ResultDialogComponent
+  ],
+  entryComponents: [
+    ResultDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -23,6 +29,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
+    MatDialogModule,
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
@@ -34,7 +41,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       headerName: 'ACSM-GDPR_Assessment-Xsrf-Header',
     })
   ],
-  providers: [],
+  providers: [
+    APIGatewayService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

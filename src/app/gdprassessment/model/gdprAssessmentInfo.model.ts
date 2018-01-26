@@ -16,5 +16,4 @@
     public isPrivacyShieldCertified: boolean;
     public certifications: string[];
     public dataClassificationLevels: number;
-    public acsmComplexityValue: number;
   }

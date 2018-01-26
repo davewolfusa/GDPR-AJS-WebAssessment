@@ -1,14 +1,19 @@
+import { APIGatewayService } from './apigatewayservice';
+import { APIGatewayResponse } from './model/apigatewayresponse.model';
 import { Component, Directive, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-import { RequestorInfo } from './model/requestorInfo.model';
-import { GDPRAssessmentInfo } from './model/gdprAssessmentInfo.model';
-import { Certification } from './model/certification.model';
-import { Country } from './model/country.model';
-import { GDPRQuickAssessmentBean } from './model/gdprquickassessmentbean.model';
-import { IAASProvider } from './model/iaasprovider.model';
 import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { ResultDialogComponent } from './resultdialog/resultdialog.component';
+import { GDPRAssessmentRequest } from './model/gdprassessmentrequest.model';
+import { GDPRAssessmentInfo } from './model/gdprAssessmentInfo.model';
+import { RequestorInfo } from './model/requestorInfo.model';
+import { Certification } from './model/certification.model';
+import { IAASProvider } from './model/iaasprovider.model';
+import { Country } from './model/country.model';
+import { GDPRAssessmentResponse } from './model/gdprassessmentresponse.model';
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -18,8 +23,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 
-// return iaasProviderCountFC.dirty && iaasProviderCountFC === 0;
-
 @Component({
   selector: 'app-gdprassessment',
   templateUrl: './gdprassessment.component.html',
@@ -28,15 +31,19 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 
 export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
-  GDPR_LAMBDA_URL = 'https://d503c4cwl9.execute-api.us-west-2.amazonaws.com/prod/GDPRAssessment';
   requestor: RequestorInfo;
   assessmentInfo: GDPRAssessmentInfo;
-  gdprBean: GDPRQuickAssessmentBean;
-  results: string[];
+  gdprRequest: GDPRAssessmentRequest;
+  apiGatewayResponse: APIGatewayResponse;
 
   isFormValid = false;
   areProviderFieldsDisabled = true;
 
+  private loading = false;
+
+  COUNTRY_LIST = Country.getCountryList();
+  CERTIFICATION_LIST = Certification.getCertificationList();
+  IAAS_PROVIDER_LIST = IAASProvider.getIAASProviderList();
 
   // Valdations
   namePattern = /^[a-zA-Z][a-zA-Z ,]+$/;
@@ -72,37 +79,10 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   certificationsFC: FormControl;
   dataClassificationLevelsFC: FormControl;
 
-  public CERTIFICATION_LIST: Array<Certification> = [
-      { id: 'NONE', name: 'None' },
-      { id: 'ISO', name: 'ISO' },
-      { id: 'PCI', name: 'PCI' },
-      { id: 'HIPPA', name: 'HIPPA' },
-      { id: 'US_FEDRAL', name: 'US Federal' }
-  ];
-
-  public IAAS_PROVIDER_LIST: Array<IAASProvider> = [
-      { id: 'AMAZON_WEB_SERVICES', name: 'Amazon Web Services' },
-      { id: 'GOOGLE_CLOUD_PLATFORM', name: 'Google Cloud Platform' },
-      { id: 'MICROSOFT_AZURE', name: 'Microsoft Azure' },
-      { id: 'OTHER', name: 'Other' }
-  ];
-
-  public COUNTRY_LIST: Array<Country> = [
-      { id: 'UNITED_STATES', name: 'United States', continent: 'AMERICAS', isEUMember: false },
-      { id: 'CANADA', name: 'Canada', continent: 'AMERICAS', isEUMember: false },
-      { id: 'MEXICO', name: 'Mexico', continent: 'AMERICAS', isEUMember: false },
-      { id: 'UNITED_KINGDOM', name: 'United Kingdom', continent: 'EUROPE', isEUMember: true },
-      { id: 'FRANCE', name: 'France', continent: 'EUROPE', isEUMember: true },
-      { id: 'GERMANY', name: 'Germany', continent: 'EUROPE', isEUMember: true },
-      { id: 'SPAIN', name: 'Spain', continent: 'EUROPE', isEUMember: true },
-      { id: 'RUSSIA', name: 'Russia', continent: 'EUROPE', isEUMember: false },
-      { id: 'CHINA', name: 'China', continent: 'ASIA', isEUMember: false }
-  ];
-
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, public dialog: MatDialog, private apiGateway: APIGatewayService) {
     this.requestor = new RequestorInfo();
     this.assessmentInfo = new GDPRAssessmentInfo();
-    this.gdprBean = new GDPRQuickAssessmentBean(this.requestor, this.assessmentInfo);
+    this.gdprRequest = new GDPRAssessmentRequest(this.requestor, this.assessmentInfo);
   }
 
   ngOnInit() {
@@ -306,21 +286,40 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   }
 
   submitForm() {
+    this.loading = true;
+    this.gdprRequest.requestor = this.requestor;
+    this.gdprRequest.assessmentInfo = this.assessmentInfo;
+    this.apiGateway.create(this.gdprRequest)
+      .subscribe(
+        data => { // Success
+            this.loading = false;
+            this.apiGatewayResponse = data;
+            console.log('Response Status Code: ' + this.apiGatewayResponse.statusCode);
+            console.log('Response Result: ' + this.apiGatewayResponse.body.result);
+            console.log('Response Score: ' + this.apiGatewayResponse.body.score);
+            this.openDialog();
+      },
+       err => { // Failure
+         console.log(err);
+      });
+  }
 
-    // Make the HTTP request:
-    // 'X-Amz-Invocation-Type' : 'RequestResponse',
-    this.http.post
-    (
-      this.GDPR_LAMBDA_URL,
-      this.gdprBean,
-      {
-        headers: {
-          'Content-Type' : 'application/json'
-        }
+  openDialog(): void {
+    const dialogRef = this.dialog.open(ResultDialogComponent, {
+      width: '300px',
+      data: {
+        companyName: this.requestor.companyName,
+        score: this.apiGatewayResponse.body.score,
+        name: this.requestor.firstName + ' ' + this.requestor.lastName
       }
-    ).subscribe(data => {
-      // Read the result field from the JSON response.
-      this.results = data['results'];
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      /*
+      this.assessmentFG.reset();
+      this.assessmentFG.markAsPristine();
+      this.assessmentFG.markAsUntouched();
+       */
     });
   }
 }
