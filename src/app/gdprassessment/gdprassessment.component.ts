@@ -166,15 +166,17 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.hqLocationFC = new FormControl('', [ Validators.required ]);
-      this.officeLocationsFC = new FormControl('', [ Validators.required ]);
-      this.employeeLocationsFC = new FormControl('', [ Validators.required ]);
-      this.contractorLocationsFC = new FormControl('', [ ]);
-      this.countriesServicedFC = new FormControl('', [ Validators.required ]);
-      this.iaasProvidersFC = new FormControl({ value: '', disabled: true});
-      this.iaasProviderLocationsFC = new FormControl({ value: '', disabled: true});
+      this.hqLocationFC               = new FormControl('', [ Validators.required ]);
+      this.officeLocationsFC          = new FormControl('', [ Validators.required ]);
+      this.employeeLocationsFC        = new FormControl('', [ Validators.required ]);
+      this.contractorLocationsFC      = new FormControl('', [] );
+      this.countriesServicedFC        = new FormControl('', [ Validators.required ]);
+      this.iaasProvidersFC            = new FormControl('', [] );
+      this.iaasProvidersFC.disable();
+      this.iaasProviderLocationsFC    = new FormControl('', [] );
+      this.iaasProviderLocationsFC.disable();
       this.isPrivacyShieldCertifiedFC = new FormControl('', [ Validators.required ]);
-      this.certificationsFC = new FormControl('', [ Validators.required ]);
+      this.certificationsFC           = new FormControl('', [ Validators.required ]);
       this.dataClassificationLevelsFC = new FormControl('', [ Validators.required ]);
   }
 
@@ -315,11 +317,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      /*
-      this.assessmentFG.reset();
-      this.assessmentFG.markAsPristine();
-      this.assessmentFG.markAsUntouched();
-       */
+      this.assessmentFG.disable();
     });
   }
 }
