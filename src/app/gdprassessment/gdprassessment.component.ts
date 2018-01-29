@@ -36,9 +36,6 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   gdprRequest: GDPRAssessmentRequest;
   apiGatewayResponse: APIGatewayResponse;
 
-  isFormValid = false;
-  areProviderFieldsDisabled = true;
-
   private loading = false;
 
   COUNTRY_LIST = Country.getCountryList();

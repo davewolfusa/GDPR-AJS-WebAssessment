@@ -8,7 +8,7 @@ export class Certification {
           { id: 'NONE', name: 'None' },
           { id: 'ISO', name: 'ISO' },
           { id: 'PCI', name: 'PCI' },
-          { id: 'HIPPA', name: 'HIPPA' },
+          { id: 'HIPAA', name: 'HIPAA' },
           { id: 'US_FEDERAL', name: 'US Federal' }
         ];
 
