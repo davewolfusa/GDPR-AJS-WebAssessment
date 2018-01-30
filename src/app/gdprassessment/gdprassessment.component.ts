@@ -2,6 +2,7 @@ import { APIGatewayService } from './apigatewayservice';
 import { APIGatewayResponse } from './model/apigatewayresponse.model';
 import { Component, Directive, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
+import { ValidationErrors, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { HttpHeaders } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
@@ -21,6 +22,37 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
+}
+
+export interface ValidationErrors {
+  control_name: string;
+  error_name: string;
+  error_value: any;
+}
+
+export interface FormGroupControls {
+  [key: string]: AbstractControl;
+}
+
+export function getFormValidationErrors(controls: FormGroupControls): ValidationErrors[] {
+  let errors: ValidationErrors[] = [];
+  Object.keys(controls).forEach(key => {
+    const control = controls[ key ];
+    if (control instanceof FormGroup) {
+      errors = errors.concat(getFormValidationErrors(control.controls));
+    }
+    const controlErrors: ValidationErrors = controls[ key ].errors;
+    if (controlErrors !== null) {
+      Object.keys(controlErrors).forEach(keyError => {
+        errors.push({
+          control_name: key,
+          error_name: keyError,
+          error_value: controlErrors[ keyError ]
+        });
+      });
+    }
+  });
+  return errors;
 }
 
 @Component({
@@ -50,31 +82,31 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
   assessmentFG: FormGroup;
   requestorFG: FormGroup;
-  firstNameFC: FormControl;
-  lastNameFC: FormControl;
-  titleFC: FormControl;
-  phoneFC: FormControl;
-  emailFC: FormControl;
-  companyNameFC: FormControl;
-  companyAddressFC: FormControl;
+  firstName: FormControl;
+  lastName: FormControl;
+  title: FormControl;
+  phone: FormControl;
+  email: FormControl;
+  companyName: FormControl;
+  companyAddress: FormControl;
 
   assessmentInfoFG: FormGroup;
-  officeCountFC: FormControl;
-  employeeCountFC: FormControl;
-  contractorCountFC: FormControl;
-  productTypeCountFC: FormControl;
-  customerCountFC: FormControl;
-  iaasProviderCountFC: FormControl;
-  hqLocationFC: FormControl;
-  officeLocationsFC: FormControl;
-  employeeLocationsFC: FormControl;
-  contractorLocationsFC: FormControl;
-  countriesServicedFC: FormControl;
-  iaasProvidersFC: FormControl;
-  iaasProviderLocationsFC: FormControl;
-  isPrivacyShieldCertifiedFC: FormControl;
-  certificationsFC: FormControl;
-  dataClassificationLevelsFC: FormControl;
+  officeCount: FormControl;
+  employeeCount: FormControl;
+  contractorCount: FormControl;
+  productTypeCount: FormControl;
+  customerCount: FormControl;
+  iaasProviderCount: FormControl;
+  hqLocation: FormControl;
+  officeLocations: FormControl;
+  employeeLocations: FormControl;
+  contractorLocations: FormControl;
+  countriesServiced: FormControl;
+  iaasProviders: FormControl;
+  iaasProviderLocations: FormControl;
+  isPrivacyShieldCertified: FormControl;
+  certifications: FormControl;
+  dataClassificationLevels: FormControl;
 
   constructor(private http: HttpClient, public dialog: MatDialog, private apiGateway: APIGatewayService) {
     this.requestor = new RequestorInfo();
@@ -89,139 +121,140 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
   createFormControls() {
 
-      this.firstNameFC = new FormControl('', [
+      this.firstName = new FormControl('', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(this.namePattern)
       ]);
-      this.lastNameFC = new FormControl('', [
+      this.lastName = new FormControl('', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(this.namePattern)
       ]);
-      this.titleFC = new FormControl('', [
+      this.title = new FormControl('', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(this.namePattern)
       ]);
-      this.phoneFC = new FormControl('', [
+      this.phone = new FormControl('', [
         Validators.required,
         Validators.pattern(this.phonePattern)
       ]);
-      this.emailFC = new FormControl('', [
+      this.email = new FormControl('', [
         Validators.required,
         Validators.email,
       ]);
-      this.companyNameFC = new FormControl('', [
+      this.companyName = new FormControl('', [
         Validators.required,
         Validators.minLength(2),
         Validators.maxLength(60),
         Validators.pattern(this.namePattern)
       ]);
-      this.companyAddressFC = new FormControl('', [
+      this.companyAddress = new FormControl('', [
         Validators.required,
         Validators.minLength(10),
         Validators.maxLength(200),
         Validators.pattern(this.addressPattern)
       ]);
-      this.officeCountFC = new FormControl('', [
+      this.officeCount = new FormControl('', [
         Validators.required,
         Validators.min(1),
         Validators.max(1000000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.employeeCountFC = new FormControl('', [
+      this.employeeCount = new FormControl('', [
         Validators.required,
         Validators.min(1),
         Validators.max(10000000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.contractorCountFC = new FormControl('', [
+      this.contractorCount = new FormControl('', [
         Validators.required,
         Validators.min(0),
         Validators.max(10000000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.productTypeCountFC = new FormControl('', [
+      this.productTypeCount = new FormControl('', [
         Validators.required,
         Validators.min(1),
         Validators.max(100000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.customerCountFC = new FormControl('', [
+      this.customerCount = new FormControl('', [
         Validators.required,
         Validators.min(1),
         Validators.max(10000000000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.iaasProviderCountFC = new FormControl('', [
+      this.iaasProviderCount = new FormControl('', [
         Validators.required,
         Validators.min(0),
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.hqLocationFC               = new FormControl('', [ Validators.required ]);
-      this.officeLocationsFC          = new FormControl('', [ Validators.required ]);
-      this.employeeLocationsFC        = new FormControl('', [ Validators.required ]);
-      this.contractorLocationsFC      = new FormControl('', [] );
-      this.countriesServicedFC        = new FormControl('', [ Validators.required ]);
-      this.iaasProvidersFC            = new FormControl('', [] );
-      this.iaasProvidersFC.disable();
-      this.iaasProviderLocationsFC    = new FormControl('', [] );
-      this.iaasProviderLocationsFC.disable();
-      this.isPrivacyShieldCertifiedFC = new FormControl('', [ Validators.required ]);
-      this.certificationsFC           = new FormControl('', [ Validators.required ]);
-      this.dataClassificationLevelsFC = new FormControl('', [ Validators.required ]);
+      this.hqLocation               = new FormControl('', [ Validators.required ]);
+      this.officeLocations          = new FormControl('', [ Validators.required ]);
+      this.employeeLocations        = new FormControl('', [ Validators.required ]);
+      this.contractorLocations      = new FormControl('', [] );
+      this.countriesServiced        = new FormControl('', [ Validators.required ]);
+      this.iaasProviders            = new FormControl('', [] );
+      this.iaasProviders.disable();
+      this.iaasProviderLocations    = new FormControl('', [] );
+      this.iaasProviderLocations.disable();
+      this.isPrivacyShieldCertified = new FormControl('', [ Validators.required ]);
+      this.certifications           = new FormControl('', [ Validators.required ]);
+      this.dataClassificationLevels = new FormControl('', [ Validators.required ]);
   }
+
 
   onUpdateContractorCountValue() {
     if (this.assessmentInfo.contractorCount < 1) {
-      this.contractorLocationsFC.disable();
+      this.contractorLocations.disable();
     } else {
-      this.contractorLocationsFC.enable();
+      this.contractorLocations.enable();
     }
   }
 
   onUpdateProviderCountValue() {
     if (this.assessmentInfo.iaasProviderCount < 1) {
-      this.iaasProvidersFC.disable();
-      this.iaasProviderLocationsFC.disable();
+      this.iaasProviders.disable();
+      this.iaasProviderLocations.disable();
     } else {
-      this.iaasProvidersFC.enable();
-      this.iaasProviderLocationsFC.enable();
+      this.iaasProviders.enable();
+      this.iaasProviderLocations.enable();
     }
   }
 
   createForm() {
     this.requestorFG = new FormGroup({
-        firstNameFC: this.firstNameFC,
-        lastNameFC: this.lastNameFC,
-        titleFC: this.titleFC,
-        phoneFC: this.phoneFC,
-        emailFC: this.emailFC,
-        companyName: this.companyNameFC,
-        companyAddressFC: this.companyAddressFC
+        firstName: this.firstName,
+        lastName: this.lastName,
+        title: this.title,
+        phone: this.phone,
+        email: this.email,
+        companyName: this.companyName,
+        companyAddress: this.companyAddress
     });
     this.assessmentInfoFG =  new FormGroup({
-        hqLocationFC: this.hqLocationFC,
-        countriesServicedFC: this.countriesServicedFC,
-        officeCountFC: this.officeCountFC,
-        officeLocationsFC: this.officeLocationsFC,
-        employeeCountFC: this.employeeCountFC,
-        employeeLocationsFC: this.employeeLocationsFC,
-        contractorCountFC: this.contractorCountFC,
-        contractorLocationsFC: this.contractorLocationsFC,
-        productTypeCountFC: this.productTypeCountFC,
-        customerCountFC: this.customerCountFC,
-        iaasProviderCountFC: this.iaasProviderCountFC,
-        iaasProvidersFC: this.iaasProvidersFC,
-        iaasProviderLocationsFC: this.iaasProviderLocationsFC,
-        isPrivacyShieldCertifiedFC: this.isPrivacyShieldCertifiedFC,
-        certificationsFC: this.certificationsFC,
-        dataClassificationLevelsFC: this.dataClassificationLevelsFC
+        hqLocation: this.hqLocation,
+        countriesServiced: this.countriesServiced,
+        officeCount: this.officeCount,
+        officeLocations: this.officeLocations,
+        employeeCount: this.employeeCount,
+        employeeLocations: this.employeeLocations,
+        contractorCount: this.contractorCount,
+        contractorLocations: this.contractorLocations,
+        productTypeCount: this.productTypeCount,
+        customerCount: this.customerCount,
+        iaasProviderCount: this.iaasProviderCount,
+        iaasProviders: this.iaasProviders,
+        iaasProviderLocations: this.iaasProviderLocations,
+        isPrivacyShieldCertified: this.isPrivacyShieldCertified,
+        certifications: this.certifications,
+        dataClassificationLevels: this.dataClassificationLevels
     });
     this.assessmentFG = new FormGroup({
         requestorFG: this.requestorFG,
@@ -284,6 +317,26 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     return message;
   }
 
+  getValidationErrors(): Array<string> {
+    const errorTextArray: Array<string> = new Array<string>();
+      if (!this.assessmentFG.valid) {
+          const validationErrors: Array<ValidationErrors> = getFormValidationErrors(this.assessmentFG.controls);
+          for (const validationError of validationErrors) {
+            let text;
+            switch (validationError.error_name) {
+              case 'required': text = `${validationError.control_name} is required!`; break;
+              case 'email': text = `${validationError.control_name} has an incorrect email format!`; break;
+              case 'pattern': text = `${validationError.control_name} has wrong pattern!`; break;
+              case 'minlength': text = `${validationError.control_name} is too short`; break;
+              case 'maxlength': text = `${validationError.control_name} is too long`; break;
+              default: text = `${validationError.control_name}: ${validationError.error_name}: ${validationError.error_value}`;
+            }
+            errorTextArray.push(text);
+          }
+      }
+    return errorTextArray;
+  }
+
   submitForm() {
     this.loading = true;
     this.gdprRequest.requestor = this.requestor;
@@ -314,6 +367,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      this.assessmentFG.markAsPristine();
       this.assessmentFG.disable();
     });
   }

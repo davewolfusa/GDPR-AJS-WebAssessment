@@ -5,66 +5,66 @@
 <ul class="ul li span" spellcheck="true">
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.firstName" [formControl]="firstNameFC" required 
+ <input matInput [(ngModel)]="requestor.firstName" [formControl]="firstName" required 
  name="first name" placeholder="first name">
-    <mat-error *ngIf="firstNameFC.invalid">
-      {{ getTextErrorMessages(firstNameFC, 'name', 60) }}
+    <mat-error *ngIf="firstName.invalid">
+      {{ getTextErrorMessages(firstName, 'name', 60) }}
     </mat-error>
  </mat-form-field>
   
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.lastName" [formControl]="lastNameFC" required 
+ <input matInput [(ngModel)]="requestor.lastName" [formControl]="lastName" required 
  name="last name" placeholder="last name">
-    <mat-error *ngIf="lastNameFC.invalid">
-      {{ getTextErrorMessages(lastNameFC, 'name', 60) }}
+    <mat-error *ngIf="lastName.invalid">
+      {{ getTextErrorMessages(lastName, 'name', 60) }}
     </mat-error>
   </mat-form-field>
  </li>
   
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.title" [formControl]="titleFC" required
+ <input matInput [(ngModel)]="requestor.title" [formControl]="title" required
  name="title" placeholder="title">
-    <mat-error *ngIf="lastNameFC.invalid">
-      {{ getTextErrorMessages(titleFC, 'title', 60) }}
+    <mat-error *ngIf="lastName.invalid">
+      {{ getTextErrorMessages(title, 'title', 60) }}
     </mat-error>
   </mat-form-field>
  </li>
   
  <li>
  <mat-form-field class="half-width">
- <input matInput type="tel" [(ngModel)]="requestor.phone" [formControl]="phoneFC" required
+ <input matInput type="tel" [(ngModel)]="requestor.phone" [formControl]="phone" required
  name="phone" placeholder="phone" >
  <mat-hint>(nnn) nnn-nnnn</mat-hint>
-    <mat-error *ngIf="phoneFC.invalid">
-      {{ getFieldErrorMessages(phoneFC, 'phone') }}
+    <mat-error *ngIf="phone.invalid">
+      {{ getFieldErrorMessages(phone, 'phone') }}
     </mat-error>
   </mat-form-field>
   
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.email" [formControl]="emailFC" required
+ <input matInput [(ngModel)]="requestor.email" [formControl]="email" required
  name="email" placeholder="email" >
  <mat-hint>name@domain name</mat-hint>
-    <mat-error *ngIf="emailFC.invalid">
-      {{ getFieldErrorMessages(emailFC, 'email') }}
+    <mat-error *ngIf="email.invalid">
+      {{ getFieldErrorMessages(email, 'email') }}
     </mat-error>
   </mat-form-field>
  </li>
  
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.companyName"  [formControl]="companyNameFC" required
+ <input matInput [(ngModel)]="requestor.companyName"  [formControl]="companyName" required
  name="company name" placeholder="company name" >
-    <mat-error *ngIf="companyNameFC.invalid">
-      {{ getTextErrorMessages(companyNameFC, 'company name', 60) }}
+    <mat-error *ngIf="companyName.invalid">
+      {{ getTextErrorMessages(companyName, 'company name', 60) }}
     </mat-error>
   </mat-form-field>
   
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.companyAddress"  [formControl]="companyAddressFC" required
+ <input matInput [(ngModel)]="requestor.companyAddress"  [formControl]="companyAddress" required
  name="company address" placeholder="company address" size=50>
-    <mat-error *ngIf="companyAddressFC.invalid">
-      {{ getTextErrorMessages(companyAddressFC, 'company address', 100) }}
+    <mat-error *ngIf="companyAddress.invalid">
+      {{ getTextErrorMessages(companyAddress, 'company address', 100) }}
     </mat-error>
   </mat-form-field>
   </li>
@@ -80,28 +80,28 @@
  <li>
  <mat-form-field class="half-width"> 
   <mat-select placeholder="hq location" 
-   [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocationFC"
+   [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation"
    class="additional-selection" required> 
    <mat-option *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{
   country.name }}</mat-option> </mat-select> 
-    <mat-error *ngIf="hqLocationFC.hasError('required')">
+    <mat-error *ngIf="hqLocation.hasError('required')">
       You must select a HQ location
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="half-width"> 
  <mat-select placeholder="countries serviced"
-  [(ngModel)]="assessmentInfo.servicedCountries" [formControl]="countriesServicedFC"  
+  [(ngModel)]="assessmentInfo.servicedCountries" [formControl]="countriesServiced"  
   class="additional-selection" multiple required> 
-  <mat-select-trigger> {{countriesServicedFC.value ? countriesServicedFC.value[0] : ''}} 
-            <span *ngIf="countriesServicedFC.value?.length > 1" >
-               (+{{countriesServicedFC.value.length - 1}} others) 
+  <mat-select-trigger> {{countriesServiced.value ? countriesServiced.value[0] : ''}} 
+            <span *ngIf="countriesServiced.value?.length > 1" >
+               (+{{countriesServiced.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
   *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{
  country.name }}</mat-option> </mat-select> 
-    <mat-error *ngIf="countriesServicedFC.invalid">
+    <mat-error *ngIf="countriesServiced.invalid">
       You must select the that are countries serviced.
     </mat-error>
  </mat-form-field>
@@ -109,26 +109,26 @@
   
 <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="assessmentInfo.officeCount" [formControl]="officeCountFC" required 
+ <input matInput [(ngModel)]="assessmentInfo.officeCount" [formControl]="officeCount" required 
  name="office count" placeholder="office count">
-    <mat-error *ngIf="officeCountFC.invalid">
-      {{ getFieldErrorMessages(officeCountFC, 'office count') }}
+    <mat-error *ngIf="officeCount.invalid">
+      {{ getFieldErrorMessages(officeCount, 'office count') }}
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="half-width"> 
  <mat-select placeholder="office locations" 
-  [(ngModel)]="assessmentInfo.officeLocations" [formControl]="officeLocationsFC" 
+  [(ngModel)]="assessmentInfo.officeLocations" [formControl]="officeLocations" 
   class="additional-selection"  multiple required> 
-  <mat-select-trigger> {{officeLocationsFC.value ? officeLocationsFC.value[0] : ''}} 
-            <span *ngIf="officeLocationsFC.value?.length > 1" >
-               (+{{officeLocationsFC.value.length - 1}} others) 
+  <mat-select-trigger> {{officeLocations.value ? officeLocations.value[0] : ''}} 
+            <span *ngIf="officeLocations.value?.length > 1" >
+               (+{{officeLocations.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
   *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{
  country.name }}</mat-option> </mat-select> 
-    <mat-error *ngIf="officeLocationsFC.invalid">
+    <mat-error *ngIf="officeLocations.invalid">
       You must select the office locations.
     </mat-error>
  </mat-form-field>
@@ -136,25 +136,25 @@
  
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="assessmentInfo.employeeCount" [formControl]="employeeCountFC" required
+ <input matInput [(ngModel)]="assessmentInfo.employeeCount" [formControl]="employeeCount" required
  name="employee count" placeholder="employee count" size=50>
-    <mat-error *ngIf="employeeCountFC.invalid">
-      {{ getFieldErrorMessages(employeeCountFC, 'employee count') }}
+    <mat-error *ngIf="employeeCount.invalid">
+      {{ getFieldErrorMessages(employeeCount, 'employee count') }}
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="half-width"> 
  <mat-select placeholder="employee locations"
-  [(ngModel)]="assessmentInfo.employeeLocations" [formControl]="employeeLocationsFC" class="additional-selection" multiple required> 
-  <mat-select-trigger> {{employeeLocationsFC.value ? employeeLocationsFC.value[0] : ''}} 
-            <span *ngIf="employeeLocationsFC.value?.length > 1" >
-               (+{{employeeLocationsFC.value.length - 1}} others) 
+  [(ngModel)]="assessmentInfo.employeeLocations" [formControl]="employeeLocations" class="additional-selection" multiple required> 
+  <mat-select-trigger> {{employeeLocations.value ? employeeLocations.value[0] : ''}} 
+            <span *ngIf="employeeLocations.value?.length > 1" >
+               (+{{employeeLocations.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
   *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{ country.name }}</mat-option> 
   </mat-select> 
-    <mat-error *ngIf="employeeLocationsFC.invalid">
+    <mat-error *ngIf="employeeLocations.invalid">
       You must select employee locations.
     </mat-error>
   </mat-form-field>
@@ -162,27 +162,27 @@
  
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="assessmentInfo.contractorCount" [formControl]="contractorCountFC" required
+ <input matInput [(ngModel)]="assessmentInfo.contractorCount" [formControl]="contractorCount" required
  name="contractor count" placeholder="contractor count" size=50
  (input)="onUpdateContractorCountValue()"
  >
-    <mat-error *ngIf="contractorCountFC.invalid">
-      {{ getFieldErrorMessages(contractorCountFC, 'contractor count') }}
+    <mat-error *ngIf="contractorCount.invalid">
+      {{ getFieldErrorMessages(contractorCount, 'contractor count') }}
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="half-width"> 
  <mat-select placeholder="contractor locations"
-  [(ngModel)]="assessmentInfo.contractorLocations" [formControl]="contractorLocationsFC" class="additional-selection" multiple required> 
-  <mat-select-trigger> {{contractorLocationsFC.value ? contractorLocationsFC.value[0] : ''}} 
-            <span *ngIf="contractorLocationsFC.value?.length > 1" class="additional-selection" >
-               (+{{contractorLocationsFC.value.length - 1}} others) 
+  [(ngModel)]="assessmentInfo.contractorLocations" [formControl]="contractorLocations" class="additional-selection" multiple required> 
+  <mat-select-trigger> {{contractorLocations.value ? contractorLocations.value[0] : ''}} 
+            <span *ngIf="contractorLocations.value?.length > 1" class="additional-selection" >
+               (+{{contractorLocations.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
   *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{ country.name }}</mat-option> 
   </mat-select> 
-    <mat-error *ngIf="contractorLocationsFC.invalid">
+    <mat-error *ngIf="contractorLocations.invalid">
       You must select contractor locations.
     </mat-error>
   </mat-form-field>
@@ -190,41 +190,41 @@
   
  <li>
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="assessmentInfo.productTypeCount" [formControl]="productTypeCountFC" required
+ <input matInput [(ngModel)]="assessmentInfo.productTypeCount" [formControl]="productTypeCount" required
  name="product type count" placeholder="product type count" size=50>
-    <mat-error *ngIf="productTypeCountFC.invalid">
-      {{ getFieldErrorMessages(productTypeCountFC, 'product type count') }}
+    <mat-error *ngIf="productTypeCount.invalid">
+      {{ getFieldErrorMessages(productTypeCount, 'product type count') }}
     </mat-error>
   </mat-form-field>
   
  <mat-form-field class="half-width">
- <input matInput [(ngModel)]="assessmentInfo.customerCount" [formControl]="customerCountFC" required
+ <input matInput [(ngModel)]="assessmentInfo.customerCount" [formControl]="customerCount" required
  name="customer count" placeholder="customer count" >
-    <mat-error *ngIf="productTypeCountFC.invalid">
-      {{ getFieldErrorMessages(productTypeCountFC, 'product type count') }}
+    <mat-error *ngIf="productTypeCount.invalid">
+      {{ getFieldErrorMessages(productTypeCount, 'product type count') }}
     </mat-error>
   </mat-form-field>
   </li>
   
   <li>
  <mat-form-field class="third-width">
- <input matInput [(ngModel)]="assessmentInfo.iaasProviderCount" [formControl]="iaasProviderCountFC" required
+ <input matInput [(ngModel)]="assessmentInfo.iaasProviderCount" [formControl]="iaasProviderCount" required
  name="IAAS Provider Count" placeholder="IAAS provider count"
  (input)="onUpdateProviderCountValue()"
  >
-    <mat-error *ngIf="iaasProviderCountFC.invalid">
-      {{ getFieldErrorMessages(iaasProviderCountFC, 'IAAS Provider count') }}
+    <mat-error *ngIf="iaasProviderCount.invalid">
+      {{ getFieldErrorMessages(iaasProviderCount, 'IAAS Provider count') }}
     </mat-error>
   </mat-form-field>
  
  <mat-form-field class="third-width"> 
  <div >
  <mat-select placeholder="IAAS providers" 
-  [(ngModel)]="assessmentInfo.iaasProviders" [formControl]="iaasProvidersFC" 
+  [(ngModel)]="assessmentInfo.iaasProviders" [formControl]="iaasProviders" 
   class="additional-selection" multiple required> 
-  <mat-select-trigger> {{iaasProvidersFC.value ? iaasProvidersFC.value[0] : ''}} 
-            <span *ngIf="iaasProvidersFC.value?.length > 1" >
-               (+{{iaasProvidersFC.value.length - 1}} others) 
+  <mat-select-trigger> {{iaasProviders.value ? iaasProviders.value[0] : ''}} 
+            <span *ngIf="iaasProviders.value?.length > 1" >
+               (+{{iaasProviders.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
@@ -235,11 +235,11 @@
  
  <mat-form-field class="third-width"> 
  <mat-select placeholder="IAAS provider locations" 
-  [(ngModel)]="assessmentInfo.iaasProviderLocations" [formControl]="iaasProviderLocationsFC" 
+  [(ngModel)]="assessmentInfo.iaasProviderLocations" [formControl]="iaasProviderLocations" 
   class="additional-selection" multiple required> 
-  <mat-select-trigger> {{iaasProviderLocationsFC.value ? iaasProviderLocationsFC.value[0] : ''}} 
-            <span *ngIf="iaasProviderLocationsFC.value?.length > 1"  >
-               (+{{iaasProviderLocationsFC.value.length - 1}} others) 
+  <mat-select-trigger> {{iaasProviderLocations.value ? iaasProviderLocations.value[0] : ''}} 
+            <span *ngIf="iaasProviderLocations.value?.length > 1"  >
+               (+{{iaasProviderLocations.value.length - 1}} others) 
             </span> 
         </mat-select-trigger>   
         <mat-option
@@ -251,35 +251,35 @@
  <li>
  <mat-form-field class="third-width">
  <mat-select placeholder="privacy shield certified?"
- [(ngModel)]="assessmentInfo.isPrivacyShieldCertified" [formControl]="isPrivacyShieldCertifiedFC"
+ [(ngModel)]="assessmentInfo.isPrivacyShieldCertified" [formControl]="isPrivacyShieldCertified"
  class="additional-selection" required>
    <mat-option [value]=true>True</mat-option>
    <mat-option [value]=false>False</mat-option>
    </mat-select>
-    <mat-error *ngIf="isPrivacyShieldCertifiedFC.invalid && isPrivacyShieldCertifiedFC.dirty">
+    <mat-error *ngIf="isPrivacyShieldCertified.invalid && isPrivacyShieldCertified.dirty">
       You must select a value.
     </mat-error>
   </mat-form-field>
 
  <mat-form-field class="third-width"> 
  <mat-select placeholder="certifications"
-   [(ngModel)]="assessmentInfo.certifications" [formControl]="certificationsFC" 
+   [(ngModel)]="assessmentInfo.certifications" [formControl]="certifications" 
    class="additional-selection" multiple required> 
-   <mat-select-trigger>{{certificationsFC.value ? certificationsFC.value[0] :
-  ''}} <span *ngIf="certificationsFC.value?.length > 1" >
-   (+{{certificationsFC.value.length - 1}} others) </span> 
+   <mat-select-trigger>{{certifications.value ? certifications.value[0] :
+  ''}} <span *ngIf="certifications.value?.length > 1" >
+   (+{{certifications.value.length - 1}} others) </span> 
    </mat-select-trigger> 
    <mat-option
    *ngFor="let certification of CERTIFICATION_LIST" [value]="certification.id">{{certification.name}}</mat-option> 
    </mat-select> 
-    <mat-error *ngIf="certificationsFC.invalid">
+    <mat-error *ngIf="certifications.invalid">
       You must select your certifications.
     </mat-error>
    </mat-form-field>
    
  <mat-form-field class="third-width">
  <mat-select placeholder="# of data classification levels"
- [(ngModel)]="assessmentInfo.dataClassificationLevels" [formControl]="dataClassificationLevelsFC" 
+ [(ngModel)]="assessmentInfo.dataClassificationLevels" [formControl]="dataClassificationLevels" 
    class="additional-selection" required> 
    <mat-option [value]=1>One</mat-option>
    <mat-option [value]=2>Two</mat-option>
@@ -292,13 +292,20 @@
    <mat-option [value]=9>Nine</mat-option>
    <mat-option [value]=10>Ten</mat-option>
    </mat-select>
-    <mat-error *ngIf="dataClassificationLevelsFC.invalid">
+    <mat-error *ngIf="dataClassificationLevels.invalid">
       You must select contractor locations.
     </mat-error>
   </mat-form-field>
    </li>
 </ul>
 </fieldset>
+<div *ngIf="assessmentFG.invalid && assessmentFG.dirty">
+    <ul>
+      <li class="error-text" *ngFor="let error of getValidationErrors()">
+          {{ error }}
+      </li>
+    </ul>
+</div>
 <div class="text-center">
   <p class="lead" *ngIf="loading">Loading...</p>
 </div>
