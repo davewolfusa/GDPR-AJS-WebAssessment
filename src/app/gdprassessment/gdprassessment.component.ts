@@ -77,7 +77,8 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   // Valdations
   namePattern = /^[a-zA-Z][a-zA-Z ,]+$/;
   phonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
-  addressPattern = /^[0-9]{1,8}[ ][a-zA-Z][a-zA-Z0-9 ,\.\#]+$/;
+  // addressPattern = /^[0-9]{1,8}[ ][a-zA-Z][a-zA-Z0-9 ,\.\#]+$/;
+  addressPattern = /^(\d+[A-z]?)\s(([NESW][.]?)[\s])?(([0-9A-z-.\s]+)\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?),\s([A-z-\s]+),\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?(\s([A-z-\s]+))?$/;
   integerPattern = /^[0-9]{1,8}$/;
 
   assessmentFG: FormGroup;
