@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { APIGatewayService } from './gdprassessment/apigatewayservice';
 import { FormsModule } from '@angular/forms';
@@ -12,12 +13,14 @@ import { MatTooltipModule, MatButtonModule, MatDialogModule } from '@angular/mat
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ResultDialogComponent } from './gdprassessment/resultdialog/resultdialog.component';
+import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgauge';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     GdprassessmentComponent,
+    jqxGaugeComponent,
     ResultDialogComponent
   ],
   entryComponents: [
@@ -26,6 +29,7 @@ import { ResultDialogComponent } from './gdprassessment/resultdialog/resultdialo
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatAutocompleteModule,

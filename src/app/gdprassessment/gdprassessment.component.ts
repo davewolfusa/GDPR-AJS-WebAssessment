@@ -69,15 +69,14 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   apiGatewayResponse: APIGatewayResponse;
 
   public loading = false;
-
   COUNTRY_LIST = Country.getCountryList();
   CERTIFICATION_LIST = Certification.getCertificationList();
   IAAS_PROVIDER_LIST = IAASProvider.getIAASProviderList();
 
   // Valdations
-  namePattern = /^[a-zA-Z][a-zA-Z ,]+$/;
+  namePattern = /^[A-Z][A-z -,.]+$/;
+  companyNamePattern = /^[A-Z0-9]A-z0-9- ,.]+$/;
   phonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
-  // addressPattern = /^[0-9]{1,8}[ ][a-zA-Z][a-zA-Z0-9 ,\.\#]+$/;
   addressPattern = new RegExp('' +
     // Street Number
     /^(\d+[A-z]?)\s/.source +
@@ -356,10 +355,14 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         data => { // Success
             this.loading = false;
             this.apiGatewayResponse = data;
-            console.log('Response Status Code: ' + this.apiGatewayResponse.statusCode);
-            console.log('Response Result: ' + this.apiGatewayResponse.body.result);
-            console.log('Response Score: ' + this.apiGatewayResponse.body.score);
-            this.openDialog();
+            if (this.apiGatewayResponse != null && this.apiGatewayResponse.statusCode == "200") {
+                this.openDialog();
+            } else {
+              console.log('Error received from WebAssessment');
+              // TODO: display error dialog.
+              this.assessmentFG.markAsPristine();
+              this.assessmentFG.disable();
+            }
       },
        err => { // Failure
          console.log(err);
@@ -368,7 +371,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(ResultDialogComponent, {
-      width: '300px',
+      width: '400px',
       data: {
         companyName: this.requestor.companyName,
         score: this.apiGatewayResponse.body.score,
