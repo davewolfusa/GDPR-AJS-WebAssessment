@@ -1,4 +1,5 @@
 import { APIGatewayService } from './apigatewayservice';
+import { CountriesService } from './countriesservice';
 import { APIGatewayResponse } from './model/apigatewayresponse.model';
 import { Component, Directive, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
@@ -14,7 +15,13 @@ import { RequestorInfo } from './model/requestorInfo.model';
 import { Certification } from './model/certification.model';
 import { IAASProvider } from './model/iaasprovider.model';
 import { Country } from './model/country.model';
+import { CountriesResponse } from './countriesresponse';
+import { CountriesSource } from './countriessource';
 import { GDPRAssessmentResponse } from './model/gdprassessmentresponse.model';
+import { Observable } from 'rxjs/Observable';
+import { startWith } from 'rxjs/operators/startWith';
+import { map } from 'rxjs/operators/map';
+
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -67,28 +74,33 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   assessmentInfo: GDPRAssessmentInfo;
   gdprRequest: GDPRAssessmentRequest;
   apiGatewayResponse: APIGatewayResponse;
+  countriesResponse: CountriesResponse;
+  countries: Array<Country>;
+  countriesSourceArray: Array<CountriesSource>;
 
   public loading = false;
-  COUNTRY_LIST = Country.getCountryList();
+  COUNTRY_LIST: Array<string> = ['United States', 'Mexico', 'Canada'];
+  filteredCountries: Observable<Array<Country>>;
   CERTIFICATION_LIST = Certification.getCertificationList();
   IAAS_PROVIDER_LIST = IAASProvider.getIAASProviderList();
 
   // Valdations
-  namePattern = /^[A-Z][A-z -,.]+$/;
-  companyNamePattern = /^[A-Z0-9]A-z0-9- ,.]+$/;
-  phonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+  namePattern = /^[A-z -,.]+$/;
+  companyNamePattern = /^A-z0-9- ,.]+$/;
+  phonePattern = /^(\+[0-9]{1,2}\s?)?\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
   addressPattern = new RegExp('' +
     // Street Number
     /^(\d+[A-z]?)\s/.source +
-    // Street Ordinal (N, S, E, W)
-    /(([NESW][.]?)[\s])?/.source +
-    // Street_Name Street_Type Unit_Type_Unit Designator,
-    /(([0-9A-z-.\s]{3,80})\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
+    // Street Ordinal (Nn, Ss, Ee, Ww)
+    /(([NESWnesw][.]?)[\s])?/.source +
+    // Street_Name Street_Type Unit_Type Unit_Designation,
+    /(([0-9A-z-.\s]{3,80}),?\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
     // City, State, Zip Code+4, Country
-    /,\s([A-z-\s]+),\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?(\s([A-z-\s]+))?$/.source
+    /,\s([A-z-\s]+),?\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?,?(\s([A-z-\s]+))?$/.source
   );
   integerPattern = /^[0-9]{1,8}$/;
 
+  filterCountries: FormControl;
   assessmentFG: FormGroup;
   requestorFG: FormGroup;
   firstName: FormControl;
@@ -117,15 +129,44 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   certifications: FormControl;
   dataClassificationLevels: FormControl;
 
-  constructor(private http: HttpClient, public dialog: MatDialog, private apiGateway: APIGatewayService) {
+  constructor(private http: HttpClient, public dialog: MatDialog, 
+              private apiGateway: APIGatewayService, 
+              private countriesService: CountriesService) {
     this.requestor = new RequestorInfo();
     this.assessmentInfo = new GDPRAssessmentInfo();
     this.gdprRequest = new GDPRAssessmentRequest(this.requestor, this.assessmentInfo);
+    this.countriesService.loadCountriesData()
+      .subscribe(
+        data => { // Success
+            this.countriesResponse = data;
+            console.log('Data: found ' + this.countriesResponse.countries.length + ' countries.');
+            console.log('First entry Id: ' + this.countriesResponse.countries[0].id +
+                        ' Name: ' + this.countriesResponse.countries[0].name +
+                        ' Continent: ' + this.countriesResponse.countries[0].continent +
+                        ' isEUMember: ' + this.countriesResponse.countries[0].isEUMember);
+            if (this.countriesResponse != null ) {
+                this.countries = this.countriesResponse.countries;
+            } else {
+              console.log('countries.json not found');
+            }
+      },
+       err => { // Failure
+         console.log(err);
+      });
   }
 
   ngOnInit() {
     this.createFormControls();
     this.createForm();
+    this.filteredCountries = 
+      this.filterCountries.valueChanges.
+        pipe(map(val => this.filter(val))
+    );
+  }
+  
+  filter(val: string): Array<Country> {
+    return this.countries.filter(option => 
+      option.name.toLowerCase().indexOf(val.toLowerCase()) === 0);
   }
 
   createFormControls() {
@@ -204,6 +245,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
+      this.filterCountries         = new FormControl('', [ Validators.required ]);
       this.hqLocation               = new FormControl('', [ Validators.required ]);
       this.officeLocations          = new FormControl('', [ Validators.required ]);
       this.employeeLocations        = new FormControl('', [ Validators.required ]);

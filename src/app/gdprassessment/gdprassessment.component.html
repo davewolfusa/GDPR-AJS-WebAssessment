@@ -35,7 +35,7 @@
  <mat-form-field class="half-width">
  <input matInput type="tel" [(ngModel)]="requestor.phone" [formControl]="phone" required
  name="phone" placeholder="Phone" >
- <mat-hint>(nnn) nnn-nnnn</mat-hint>
+ <mat-hint>+n (nnn) nnn-nnnn</mat-hint>
     <mat-error *ngIf="phone.invalid">
       {{ getFieldErrorMessages(phone, 'phone') }}
     </mat-error>
@@ -79,16 +79,39 @@
 <ul class="ul li span" spellcheck="true">
 
  <li>
- <mat-form-field class="half-width"> 
-  <mat-select placeholder="HQ Location" 
-   [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation"
-   class="additional-selection" required> 
-   <mat-option *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{
-  country.name }}</mat-option> </mat-select> 
+  <mat-form-field class="half-width"> 
+    <input type="text" placeholder="HQ Location" aria-label="HQ Location" 
+     matInput [formControl]="filterCountries" [matAutocomplete]="auto" class="additional-selection" required>
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country.id">
+        {{ country.name }}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-select placeholder="HQ Location" [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation" class="additional-selection" required> 
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country.id">{{ country.name }}</mat-option> 
+    </mat-select> 
     <mat-error *ngIf="hqLocation.hasError('required')">
       You must select a HQ location
     </mat-error>
   </mat-form-field>
+
+<!-- 
+  <mat-form-field class="half-width"> 
+    <input type="text" placeholder="HQ Location" aria-label="HQ Location" 
+     matInput [formControl]="filterCountries" [matAutocomplete]="auto" class="additional-selection" required>
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country.id">
+        {{ country.name }}
+      </mat-option>
+    </mat-autocomplete>
+    <mat-select placeholder="HQ Location" [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation" class="additional-selection" required> 
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country.id">{{ country.name }}</mat-option> 
+    </mat-select> 
+    <mat-error *ngIf="hqLocation.hasError('required')">
+      You must select a HQ location
+    </mat-error>
+  </mat-form-field>
+ -->
  
  <mat-form-field class="half-width"> 
  <mat-select placeholder="Countries Serviced"
@@ -100,7 +123,7 @@
             </span> 
         </mat-select-trigger>   
         <mat-option
-  *ngFor="let country of COUNTRY_LIST" [value]="country.id">{{
+  *ngFor="let country of countries" [value]="country.id">{{
  country.name }}</mat-option> </mat-select> 
     <mat-error *ngIf="countriesServiced.invalid">
       You must select the that are countries serviced.

@@ -4,6 +4,7 @@ import { NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { APIGatewayService } from './gdprassessment/apigatewayservice';
+import { CountriesService } from './gdprassessment/countriesservice';
 import { FormsModule } from '@angular/forms';
 import { GdprassessmentComponent} from './gdprassessment/gdprassessment.component';
 import { HttpClientXsrfModule } from '@angular/common/http';
@@ -46,7 +47,8 @@ import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgau
     })
   ],
   providers: [
-    APIGatewayService
+    APIGatewayService,
+    CountriesService
   ],
   bootstrap: [AppComponent]
 })
