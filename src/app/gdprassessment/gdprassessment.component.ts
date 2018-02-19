@@ -2,7 +2,8 @@ import { APIGatewayService } from './apigatewayservice';
 import { CountriesService } from './countriesservice';
 import { APIGatewayResponse } from './model/apigatewayresponse.model';
 import { Component, Directive, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
+import { FormControl, FormControlName, FormGroupDirective, FormGroup } from '@angular/forms';
+import { NgControl, NgForm, Validators, ValidatorFn } from '@angular/forms';
 import { ValidationErrors, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { HttpHeaders } from '@angular/common/http';
@@ -16,6 +17,7 @@ import { Certification } from './model/certification.model';
 import { IAASProvider } from './model/iaasprovider.model';
 import { Country } from './model/country.model';
 import { CountriesResponse } from './countriesresponse';
+import { countryValidator } from './validators/countryvalidator';
 import { CountriesSource } from './countriessource';
 import { GDPRAssessmentResponse } from './model/gdprassessmentresponse.model';
 import { Observable } from 'rxjs/Observable';
@@ -75,12 +77,11 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   gdprRequest: GDPRAssessmentRequest;
   apiGatewayResponse: APIGatewayResponse;
   countriesResponse: CountriesResponse;
-  countries: Array<Country>;
+  usa: Country = new Country('UNITED_STATES', 'United States', 'AMERICAS', false);
+  countries: Array<Country> = [ this.usa ];
   countriesSourceArray: Array<CountriesSource>;
 
   public loading = false;
-  COUNTRY_LIST: Array<string> = ['United States', 'Mexico', 'Canada'];
-  filteredCountries: Observable<Array<Country>>;
   CERTIFICATION_LIST = Certification.getCertificationList();
   IAAS_PROVIDER_LIST = IAASProvider.getIAASProviderList();
 
@@ -100,7 +101,9 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   );
   integerPattern = /^[0-9]{1,8}$/;
 
-  filterCountries: FormControl;
+  filteredHQLocations: Observable<Array<Country>>;
+  filteredCountriesServiced: Observable<Array<Country>>;
+  
   assessmentFG: FormGroup;
   requestorFG: FormGroup;
   firstName: FormControl;
@@ -112,17 +115,17 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   companyAddress: FormControl;
 
   assessmentInfoFG: FormGroup;
+  hqLocation: FormControl;
   officeCount: FormControl;
   employeeCount: FormControl;
   contractorCount: FormControl;
   productTypeCount: FormControl;
   customerCount: FormControl;
   iaasProviderCount: FormControl;
-  hqLocation: FormControl;
   officeLocations: FormControl;
   employeeLocations: FormControl;
   contractorLocations: FormControl;
-  countriesServiced: FormControl;
+  servicedCountries: FormControl;
   iaasProviders: FormControl;
   iaasProviderLocations: FormControl;
   isPrivacyShieldCertified: FormControl;
@@ -140,12 +143,15 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         data => { // Success
             this.countriesResponse = data;
             console.log('Data: found ' + this.countriesResponse.countries.length + ' countries.');
-            console.log('First entry Id: ' + this.countriesResponse.countries[0].id +
-                        ' Name: ' + this.countriesResponse.countries[0].name +
-                        ' Continent: ' + this.countriesResponse.countries[0].continent +
-                        ' isEUMember: ' + this.countriesResponse.countries[0].isEUMember);
             if (this.countriesResponse != null ) {
                 this.countries = this.countriesResponse.countries;
+                this.countries.sort((leftside:Country, rightside:Country): number => {
+                    const leftsideName = leftside.name.toLowerCase();
+                    const rightsideName = rightside.name.toLowerCase();
+                    if (leftsideName < rightsideName) return -1;
+                    if (leftsideName > rightsideName) return +1;
+                    return 0;
+                })
             } else {
               console.log('countries.json not found');
             }
@@ -158,15 +164,17 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   ngOnInit() {
     this.createFormControls();
     this.createForm();
-    this.filteredCountries = 
-      this.filterCountries.valueChanges.
-        pipe(map(val => this.filter(val))
-    );
+    this.filteredHQLocations = 
+      this.hqLocation.valueChanges
+        .pipe(
+          map(val => this.filter(val))
+        );
   }
   
-  filter(val: string): Array<Country> {
-    return this.countries.filter(option => 
-      option.name.toLowerCase().indexOf(val.toLowerCase()) === 0);
+  private filter(val: string): Array<Country> {
+      return this.countries.filter(option => 
+          option.name.toLowerCase()
+          .indexOf(val.toLowerCase().replace('_', ' ')) === 0);
   }
 
   createFormControls() {
@@ -245,12 +253,12 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.filterCountries         = new FormControl('', [ Validators.required ]);
-      this.hqLocation               = new FormControl('', [ Validators.required ]);
+      this.hqLocation               = new FormControl('', [ Validators.required,
+                                                            countryValidator(this.countries) ]);
       this.officeLocations          = new FormControl('', [ Validators.required ]);
       this.employeeLocations        = new FormControl('', [ Validators.required ]);
       this.contractorLocations      = new FormControl('', [] );
-      this.countriesServiced        = new FormControl('', [ Validators.required ]);
+      this.servicedCountries        = new FormControl('', [ Validators.required ]);
       this.iaasProviders            = new FormControl('', [] );
       this.iaasProviders.disable();
       this.iaasProviderLocations    = new FormControl('', [] );
@@ -291,7 +299,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     });
     this.assessmentInfoFG =  new FormGroup({
         hqLocation: this.hqLocation,
-        countriesServiced: this.countriesServiced,
+        servicedCountries: this.servicedCountries,
         officeCount: this.officeCount,
         officeLocations: this.officeLocations,
         employeeCount: this.employeeCount,
