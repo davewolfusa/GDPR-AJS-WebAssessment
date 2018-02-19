@@ -81,7 +81,7 @@
  <li>
   <mat-form-field class="half-width"> 
     <input type="text" placeholder="HQ Location" aria-label="HQ Location"
-     matInput [formControl]="hqLocation" [matAutocomplete]="hqLocationAC" 
+     matInput [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation" [matAutocomplete]="hqLocationAC" 
      class="additional-selection" required>
      
     <mat-autocomplete #hqLocationAC="matAutocomplete" >
