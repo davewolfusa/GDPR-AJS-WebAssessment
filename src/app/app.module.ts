@@ -11,6 +11,7 @@ import { GdprassessmentComponent} from './gdprassessment/gdprassessment.componen
 import { HttpClientXsrfModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
+import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ResultDialogComponent } from './gdprassessment/resultdialog/resultdialog.component';
@@ -33,6 +34,7 @@ import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgau
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatListModule,
     MatAutocompleteModule,
     MatDialogModule,
     MatTooltipModule,

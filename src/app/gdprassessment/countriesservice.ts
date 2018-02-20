@@ -10,7 +10,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/Rx';
 
-const COUNTRIES_JSON_FILE_PATH = '../../assets/countries.json';
+const COUNTRIES_JSON_FILE_PATH = '../../../assets/countries.json';
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };

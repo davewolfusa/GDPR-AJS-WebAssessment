@@ -2,83 +2,84 @@
 <div>
 <h2>Requestor Details:</h2>
 <fieldset [formGroup]="requestorFG">
-<ul class="ul li span" spellcheck="true">
- <li>
- <mat-form-field class="half-width">
- <input matInput type="text" [(ngModel)]="requestor.firstName" [formControl]="firstName" required 
- name="first name" placeholder="First Name">
-    <mat-error *ngIf="firstName.invalid">
-      {{ getTextErrorMessages(firstName, 'name', 60) }}
-    </mat-error>
- </mat-form-field>
+<!-- <ul class="ul li span" spellcheck="true"> -->
+<mat-list>
+  <mat-list-item>
+    <mat-form-field class="half-width">
+      <input matInput type="text" [(ngModel)]="requestor.firstName" [formControl]="firstName" 
+             name="first name" placeholder="First Name" required>
+      <mat-error *ngIf="firstName.invalid">
+          {{ getTextErrorMessages(firstName, 'name', 60) }}
+      </mat-error>
+    </mat-form-field>
   
- <mat-form-field class="half-width">
- <input matInput type="text" [(ngModel)]="requestor.lastName" [formControl]="lastName" required 
- name="last name" placeholder="Last Name">
-    <mat-error *ngIf="lastName.invalid">
-      {{ getTextErrorMessages(lastName, 'name', 60) }}
-    </mat-error>
-  </mat-form-field>
- </li>
+    <mat-form-field class="half-width">
+      <input matInput type="text" [(ngModel)]="requestor.lastName" [formControl]="lastName" 
+             name="last name" placeholder="Last Name" required>
+      <mat-error *ngIf="lastName.invalid">
+        {{ getTextErrorMessages(lastName, 'name', 60) }}
+      </mat-error>
+    </mat-form-field>
+  </mat-list-item>
   
- <li>
- <mat-form-field class="half-width">
- <input matInput type="text" [(ngModel)]="requestor.title" [formControl]="title" required
- name="title" placeholder="Title">
-    <mat-error *ngIf="lastName.invalid">
-      {{ getTextErrorMessages(title, 'title', 60) }}
-    </mat-error>
-  </mat-form-field>
- </li>
+  <mat-list-item>
+    <mat-form-field class="half-width">
+      <input matInput type="text" [(ngModel)]="requestor.title" [formControl]="title"
+             name="title" placeholder="Title" required>
+      <mat-error *ngIf="lastName.invalid">
+        {{ getTextErrorMessages(title, 'title', 60) }}
+      </mat-error>
+    </mat-form-field>
+  </mat-list-item>
   
- <li>
- <mat-form-field class="half-width">
- <input matInput type="tel" [(ngModel)]="requestor.phone" [formControl]="phone" required
- name="phone" placeholder="Phone" >
- <mat-hint>+n (nnn) nnn-nnnn</mat-hint>
-    <mat-error *ngIf="phone.invalid">
-      {{ getFieldErrorMessages(phone, 'phone') }}
-    </mat-error>
-  </mat-form-field>
+  <mat-list-item>
+    <mat-form-field class="half-width">
+      <input matInput type="tel" [(ngModel)]="requestor.phone" [formControl]="phone" 
+             name="phone" placeholder="Phone" required>
+      <mat-hint>+n (nnn) nnn-nnnn</mat-hint>
+      <mat-error *ngIf="phone.invalid">
+       {{ getFieldErrorMessages(phone, 'phone') }}
+      </mat-error>
+    </mat-form-field>
   
- <mat-form-field class="half-width">
- <input matInput type="email" [(ngModel)]="requestor.email" [formControl]="email" required
- name="email" placeholder="Email" >
- <mat-hint>name@domain name</mat-hint>
-    <mat-error *ngIf="email.invalid">
-      {{ getFieldErrorMessages(email, 'email') }}
-    </mat-error>
-  </mat-form-field>
- </li>
+    <mat-form-field class="half-width">
+      <input matInput type="email" [(ngModel)]="requestor.email" [formControl]="email" 
+             name="email" placeholder="Email" required>
+      <mat-hint>name@domain name</mat-hint>
+      <mat-error *ngIf="email.invalid">
+        {{ getFieldErrorMessages(email, 'email') }}
+      </mat-error>
+    </mat-form-field>
+  </mat-list-item>
  
- <li>
- <mat-form-field class="half-width">
- <input matInput type="text" [(ngModel)]="requestor.companyName"  [formControl]="companyName" required
- name="company name" placeholder="Company Name" >
-    <mat-error *ngIf="companyName.invalid">
-      {{ getTextErrorMessages(companyName, 'company name', 60) }}
-    </mat-error>
-  </mat-form-field>
+  <mat-list-item>
+    <mat-form-field class="half-width">
+      <input matInput type="text" [(ngModel)]="requestor.companyName"  [formControl]="companyName" 
+             name="company name" placeholder="Company Name" required>
+      <mat-error *ngIf="companyName.invalid">
+        {{ getTextErrorMessages(companyName, 'company name', 60) }}
+      </mat-error>
+    </mat-form-field>
   
- <mat-form-field class="half-width">
- <input matInput [(ngModel)]="requestor.companyAddress"  [formControl]="companyAddress" required
- name="company address" placeholder="Company Address" size=50>
-   <mat-hint>nnnnn N. Street Name St. Suite #nnn, City, State, Zip Code Country</mat-hint>
-    <mat-error *ngIf="companyAddress.invalid">
-      {{ getTextErrorMessages(companyAddress, 'company address', 100) }}
-    </mat-error>
-  </mat-form-field>
-  </li>
-</ul>
+    <mat-form-field class="half-width">
+      <input matInput [(ngModel)]="requestor.companyAddress"  [formControl]="companyAddress" 
+             name="company address" placeholder="Company Address" size=50 required>
+      <mat-hint>nnnnn N. Street Name St. Suite #nnn, City, State, Zip Code Country</mat-hint>
+      <mat-error *ngIf="companyAddress.invalid">
+        {{ getTextErrorMessages(companyAddress, 'company address', 100) }}
+      </mat-error>
+    </mat-form-field>
+  </mat-list-item>
+</mat-list>
 </fieldset>
 </div>
 
 <div>
 <h2> Assessment Information:</h2>
 <fieldset formGroupName="assessmentInfoFG">
-<ul class="ul li span" spellcheck="true">
+<mat-list>
 
- <li>
+ <mat-list-item>
   <mat-form-field class="half-width"> 
     <input type="text" placeholder="HQ Location" aria-label="HQ Location"
      matInput [(ngModel)]="assessmentInfo.hqLocation" [formControl]="hqLocation" [matAutocomplete]="hqLocationAC" 
@@ -123,9 +124,9 @@
      </mat-error>
   </mat-form-field>
  
-  </li>
+  </mat-list-item>
   
-  <li>
+  <mat-list-item>
  <mat-form-field class="half-width">
  <input matInput [(ngModel)]="assessmentInfo.officeCount" [formControl]="officeCount" required 
  name="office count" placeholder="Office Count">
@@ -149,9 +150,9 @@
       You must select the office locations.
   </mat-error>
  </mat-form-field>
- </li>
+ </mat-list-item>
  
- <li>
+ <mat-list-item>
  <mat-form-field class="half-width">
  <input matInput [(ngModel)]="assessmentInfo.employeeCount" [formControl]="employeeCount" required
  name="employee count" placeholder="Employee Count" size=50>
@@ -175,9 +176,9 @@
       You must select employee locations.
     </mat-error>
   </mat-form-field>
- </li>
+ </mat-list-item>
  
- <li>
+ <mat-list-item>
  <mat-form-field class="half-width">
  <input matInput [(ngModel)]="assessmentInfo.contractorCount" [formControl]="contractorCount" required
  name="contractor count" placeholder="Contractor Count" size=50
@@ -203,9 +204,9 @@
       You must select contractor locations.
     </mat-error>
   </mat-form-field>
- </li>
+ </mat-list-item>
   
- <li>
+ <mat-list-item>
  <mat-form-field class="half-width">
  <input matInput [(ngModel)]="assessmentInfo.productTypeCount" [formControl]="productTypeCount" required
  name="product type count" placeholder="Product Type Count" size=50>
@@ -221,9 +222,9 @@
       {{ getFieldErrorMessages(productTypeCount, 'Product Type Count') }}
     </mat-error>
   </mat-form-field>
-  </li>
+ </mat-list-item>
   
-  <li>
+  <mat-list-item>
  <mat-form-field class="third-width">
  <input matInput [(ngModel)]="assessmentInfo.iaasProviderCount" [formControl]="iaasProviderCount" required
  name="IAAS Provider Count" placeholder="IAAS Provider Count"
@@ -263,9 +264,9 @@
   *ngFor="let country of countries" [value]="country.id">{{
  country.name }}</mat-option> </mat-select> 
  </mat-form-field>
- </li>
+ </mat-list-item>
  
- <li>
+ <mat-list-item>
  <mat-form-field class="third-width">
  <mat-select placeholder="Privacy Shield Certified?"
  [(ngModel)]="assessmentInfo.isPrivacyShieldCertified" [formControl]="isPrivacyShieldCertified"
@@ -312,9 +313,9 @@
     <mat-error *ngIf="dataClassificationLevels.invalid">
       You must select contractor locations.
     </mat-error>
-  </mat-form-field>
-   </li>
-</ul>
+    </mat-form-field>
+  </mat-list-item>
+</mat-list>
 </fieldset>
 <div *ngIf="assessmentFG.invalid && assessmentFG.dirty">
     <ul>
