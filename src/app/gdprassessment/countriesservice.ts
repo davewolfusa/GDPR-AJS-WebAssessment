@@ -10,7 +10,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/Rx';
 
-const COUNTRIES_JSON_FILE_PATH = '../../../assets/countries.json';
+const COUNTRIES_JSON_FILE_PATH = 'assets/countries.json';
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -33,18 +33,6 @@ export class CountriesService {
   
   public getResponse() {
     return this.response;
-  }
-  
-  public getCountriesSourceArray(): Array<CountriesSource> {
-    var sourceArray: Array<CountriesSource> = new Array<CountriesSource>();
-    var countryArray: Array<Country> = this.response.countries;
-    for (let country of countryArray) {
-      var htmlString = SOURCE_HTML_1 + country.getName() + SOURCE_HTML_2;
-      var groupString = country.isEUMember ? ('EU-' + country.continent) : country.continent;
-      let source: CountriesSource = new CountriesSource(htmlString, country.getId(), groupString);
-      sourceArray.push(source);
-    }
-    return sourceArray;
   }
   
   /* CountriesSource Example

@@ -142,16 +142,19 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
       .subscribe(
         data => { // Success
             this.countriesResponse = data;
-            console.log('Data: found ' + this.countriesResponse.countries.length + ' countries.');
             if (this.countriesResponse != null ) {
-                this.countries = this.countriesResponse.countries;
-                this.countries.sort((leftside:Country, rightside:Country): number => {
+                this.countries = (this.countriesResponse.countries);
+                this.countries = 
+                  this.countries.sort((leftside:Country, rightside:Country): number => {
                     const leftsideName = leftside.name.toLowerCase();
                     const rightsideName = rightside.name.toLowerCase();
                     if (leftsideName < rightsideName) return -1;
                     if (leftsideName > rightsideName) return +1;
                     return 0;
                 })
+                this.hqLocation.setValidators([ Validators.required,
+                                                countryValidator(this.countries) ]);
+                console.log('Data: found ' + this.countries.length + ' countries.');
             } else {
               console.log('countries.json not found');
             }
@@ -171,7 +174,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         );
   }
   
-  private filter(val: string): Array<Country> {
+  filter(val: string): Array<Country> {
       return this.countries.filter(option => 
           option.name.toLowerCase()
           .indexOf(val.toLowerCase().replace('_', ' ')) === 0);
@@ -253,8 +256,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.hqLocation               = new FormControl('', [ Validators.required,
-                                                            countryValidator(this.countries) ]);
+      this.hqLocation               = new FormControl('', [  ]);
       this.officeLocations          = new FormControl('', [ Validators.required ]);
       this.employeeLocations        = new FormControl('', [ Validators.required ]);
       this.contractorLocations      = new FormControl('', [] );
