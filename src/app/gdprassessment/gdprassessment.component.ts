@@ -1,7 +1,9 @@
 import { APIGatewayService } from './apigatewayservice';
+import { CountriesService } from './countriesservice';
 import { APIGatewayResponse } from './model/apigatewayresponse.model';
 import { Component, Directive, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroupDirective, NgControl, NgForm, Validators, ValidatorFn, FormGroup } from '@angular/forms';
+import { FormControl, FormControlName, FormGroupDirective, FormGroup } from '@angular/forms';
+import { NgControl, NgForm, Validators, ValidatorFn } from '@angular/forms';
 import { ValidationErrors, AbstractControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { HttpHeaders } from '@angular/common/http';
@@ -14,7 +16,14 @@ import { RequestorInfo } from './model/requestorInfo.model';
 import { Certification } from './model/certification.model';
 import { IAASProvider } from './model/iaasprovider.model';
 import { Country } from './model/country.model';
+import { CountriesResponse } from './countriesresponse';
+import { countryValidator } from './validators/countryvalidator';
+import { CountriesSource } from './countriessource';
 import { GDPRAssessmentResponse } from './model/gdprassessmentresponse.model';
+import { Observable } from 'rxjs/Observable';
+import { startWith } from 'rxjs/operators/startWith';
+import { map } from 'rxjs/operators/map';
+
 
 /** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
@@ -67,28 +76,34 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   assessmentInfo: GDPRAssessmentInfo;
   gdprRequest: GDPRAssessmentRequest;
   apiGatewayResponse: APIGatewayResponse;
+  countriesResponse: CountriesResponse;
+  usa: Country = new Country('UNITED_STATES', 'United States', 'AMERICAS', false);
+  countries: Array<Country> = [ this.usa ];
+  countriesSourceArray: Array<CountriesSource>;
 
   public loading = false;
-  COUNTRY_LIST = Country.getCountryList();
   CERTIFICATION_LIST = Certification.getCertificationList();
   IAAS_PROVIDER_LIST = IAASProvider.getIAASProviderList();
 
   // Valdations
-  namePattern = /^[A-Z][A-z -,.]+$/;
-  companyNamePattern = /^[A-Z0-9]A-z0-9- ,.]+$/;
-  phonePattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+  namePattern = /^[A-z -,.]+$/;
+  companyNamePattern = /^A-z0-9- ,.]+$/;
+  phonePattern = /^(\+[0-9]{1,2}\s?)?\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
   addressPattern = new RegExp('' +
     // Street Number
     /^(\d+[A-z]?)\s/.source +
-    // Street Ordinal (N, S, E, W)
-    /(([NESW][.]?)[\s])?/.source +
-    // Street_Name Street_Type Unit_Type_Unit Designator,
-    /(([0-9A-z-.\s]{3,80})\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
+    // Street Ordinal (Nn, Ss, Ee, Ww)
+    /(([NESWnesw][.]?)[\s])?/.source +
+    // Street_Name Street_Type Unit_Type Unit_Designation,
+    /(([0-9A-z-.\s]{3,80}),?\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
     // City, State, Zip Code+4, Country
-    /,\s([A-z-\s]+),\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?(\s([A-z-\s]+))?$/.source
+    /,\s([A-z-\s]+),?\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?,?(\s([A-z-\s]+))?$/.source
   );
   integerPattern = /^[0-9]{1,8}$/;
 
+  filteredHQLocations: Observable<Array<Country>>;
+  filteredCountriesServiced: Observable<Array<Country>>;
+  
   assessmentFG: FormGroup;
   requestorFG: FormGroup;
   firstName: FormControl;
@@ -100,32 +115,69 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
   companyAddress: FormControl;
 
   assessmentInfoFG: FormGroup;
+  hqLocation: FormControl;
   officeCount: FormControl;
   employeeCount: FormControl;
   contractorCount: FormControl;
   productTypeCount: FormControl;
   customerCount: FormControl;
   iaasProviderCount: FormControl;
-  hqLocation: FormControl;
   officeLocations: FormControl;
   employeeLocations: FormControl;
   contractorLocations: FormControl;
-  countriesServiced: FormControl;
+  servicedCountries: FormControl;
   iaasProviders: FormControl;
   iaasProviderLocations: FormControl;
   isPrivacyShieldCertified: FormControl;
   certifications: FormControl;
   dataClassificationLevels: FormControl;
 
-  constructor(private http: HttpClient, public dialog: MatDialog, private apiGateway: APIGatewayService) {
+  constructor(private http: HttpClient, public dialog: MatDialog, 
+              private apiGateway: APIGatewayService, 
+              private countriesService: CountriesService) {
     this.requestor = new RequestorInfo();
     this.assessmentInfo = new GDPRAssessmentInfo();
     this.gdprRequest = new GDPRAssessmentRequest(this.requestor, this.assessmentInfo);
+    this.countriesService.loadCountriesData()
+      .subscribe(
+        data => { // Success
+            this.countriesResponse = data;
+            if (this.countriesResponse != null ) {
+                this.countries = (this.countriesResponse.countries);
+                this.countries = 
+                  this.countries.sort((leftside:Country, rightside:Country): number => {
+                    const leftsideName = leftside.name.toLowerCase();
+                    const rightsideName = rightside.name.toLowerCase();
+                    if (leftsideName < rightsideName) return -1;
+                    if (leftsideName > rightsideName) return +1;
+                    return 0;
+                })
+                this.hqLocation.setValidators([ Validators.required,
+                                                countryValidator(this.countries) ]);
+                console.log('Data: found ' + this.countries.length + ' countries.');
+            } else {
+              console.log('countries.json not found');
+            }
+      },
+       err => { // Failure
+         console.log(err);
+      });
   }
 
   ngOnInit() {
     this.createFormControls();
     this.createForm();
+    this.filteredHQLocations = 
+      this.hqLocation.valueChanges
+        .pipe(
+          map(val => this.filter(val))
+        );
+  }
+  
+  filter(val: string): Array<Country> {
+      return this.countries.filter(option => 
+          option.name.toLowerCase()
+          .indexOf(val.toLowerCase().replace('_', ' ')) === 0);
   }
 
   createFormControls() {
@@ -204,11 +256,11 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
         Validators.max(1000),
         Validators.pattern(this.integerPattern)
       ]);
-      this.hqLocation               = new FormControl('', [ Validators.required ]);
+      this.hqLocation               = new FormControl('', [  ]);
       this.officeLocations          = new FormControl('', [ Validators.required ]);
       this.employeeLocations        = new FormControl('', [ Validators.required ]);
       this.contractorLocations      = new FormControl('', [] );
-      this.countriesServiced        = new FormControl('', [ Validators.required ]);
+      this.servicedCountries        = new FormControl('', [ Validators.required ]);
       this.iaasProviders            = new FormControl('', [] );
       this.iaasProviders.disable();
       this.iaasProviderLocations    = new FormControl('', [] );
@@ -249,7 +301,7 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     });
     this.assessmentInfoFG =  new FormGroup({
         hqLocation: this.hqLocation,
-        countriesServiced: this.countriesServiced,
+        servicedCountries: this.servicedCountries,
         officeCount: this.officeCount,
         officeLocations: this.officeLocations,
         employeeCount: this.employeeCount,

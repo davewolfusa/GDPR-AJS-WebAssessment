@@ -4,13 +4,15 @@ import { NgControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppComponent } from './app.component';
 import { APIGatewayService } from './gdprassessment/apigatewayservice';
-import { FormsModule } from '@angular/forms';
+import { CountriesService } from './gdprassessment/countriesservice';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormControlName, FormGroup } from '@angular/forms';
 import { GdprassessmentComponent} from './gdprassessment/gdprassessment.component';
 import { HttpClientXsrfModule } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSelectModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule } from '@angular/material';
+import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule, MatButtonModule, MatDialogModule } from '@angular/material';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ResultDialogComponent } from './gdprassessment/resultdialog/resultdialog.component';
 import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgauge';
@@ -32,6 +34,7 @@ import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgau
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    MatListModule,
     MatAutocompleteModule,
     MatDialogModule,
     MatTooltipModule,
@@ -46,7 +49,8 @@ import { jqxGaugeComponent } from 'jqwidgets-scripts/jqwidgets-ts/angular_jqxgau
     })
   ],
   providers: [
-    APIGatewayService
+    APIGatewayService,
+    CountriesService
   ],
   bootstrap: [AppComponent]
 })
