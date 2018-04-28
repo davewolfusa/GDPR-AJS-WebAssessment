@@ -95,9 +95,9 @@ export class GdprassessmentComponent implements OnInit, ErrorStateMatcher {
     // Street Ordinal (Nn, Ss, Ee, Ww)
     /(([NESWnesw][.]?)[\s])?/.source +
     // Street_Name Street_Type Unit_Type Unit_Designation,
-    /(([0-9A-z-.\s]{3,80}),?\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
+    /(([0-9A-z-.\s]{0,80}),?\s([A-z0-9-.]+)?(\s(([A-z0-9.]+\s)?(#?[0-9A-z]+)))?)/.source +
     // City, State, Zip Code+4, Country
-    /,\s([A-z-\s]+),?\s([A-z]+)\s(([0-9]{5})(-[0-9]{4})?)?,?(\s([A-z-\s]+))?$/.source
+    /,?\s([A-z-\s]+),?\s([A-z]+),?\s(([0-9]{5})(-[0-9]{4})?)?,?(\s([A-z-\s]+))?$/.source
   );
   integerPattern = /^[0-9]{1,8}$/;
 
